@@ -65,6 +65,8 @@ export default {
       },
     });
 
+    await prisma.profile.create({ data: { bio, userId: user.id } });
+
     const token = jwt.sign(
       {
         userId: user.id,
