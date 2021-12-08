@@ -1,5 +1,5 @@
 import { Post, Prisma } from ".prisma/client";
-import { Context } from "../server";
+import { Context } from "../../server";
 
 interface PostCreateArgs {
   post: {
@@ -15,7 +15,7 @@ interface PostPayloadType {
   post: Post | Prisma.Prisma__PostClient<Post> | null;
 }
 
-export const Mutation = {
+export default {
   postCreate: async (
     _: any,
     { post }: PostCreateArgs,
@@ -102,7 +102,7 @@ export const Mutation = {
     { prisma }: Context
   ): Promise<PostPayloadType> => {
     const post = await prisma.post.findUnique({
-      where: { id: Number(postId) },
+      where: { id: parseInt(postId) },
     });
     if (!post) {
       return {

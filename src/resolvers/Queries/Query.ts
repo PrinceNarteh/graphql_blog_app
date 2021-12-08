@@ -1,6 +1,6 @@
-import { Context } from "../server";
+import { Context } from "../../server";
 
-export const Query = {
+export const RootQuery = {
   posts: (_: any, __: any, { prisma }: Context) => {
     return prisma.post.findMany({
       orderBy: [{ createdAt: "desc" }],
