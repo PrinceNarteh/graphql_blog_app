@@ -1,7 +1,7 @@
+import { Prisma, PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
 import * as resolvers from "./resolvers";
 import { typeDefs } from "./schema";
-import { PrismaClient, Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 export interface Context {
@@ -11,8 +11,6 @@ export interface Context {
     Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
   >;
 }
-
-console.log(resolvers);
 
 const server = new ApolloServer({
   typeDefs,

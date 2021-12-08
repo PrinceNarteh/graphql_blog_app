@@ -1,6 +1,7 @@
-import { User } from ".prisma/client";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import validator from "validator";
+import { JWT_KEY } from "../../keys";
 import { Context } from "../../server";
 
 interface SignUpArgs {
@@ -14,7 +15,7 @@ interface AuthPayloadType {
   userErrors: {
     message: string;
   }[];
-  user: User | null;
+  token: string | null;
 }
 
 export default {
@@ -31,7 +32,7 @@ export default {
             message: "Please provide a valid email",
           },
         ],
-        user: null,
+        token: null,
       };
 
     const isValidPassword = validator.isLength(password, { min: 5 });
@@ -42,7 +43,7 @@ export default {
             message: "Password too short",
           },
         ],
-        user: null,
+        token: null,
       };
 
     if (!name || !bio)
@@ -52,11 +53,11 @@ export default {
             message: "Invalid Name or Bio",
           },
         ],
-        user: null,
+        token: null,
       };
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email,
         name,
@@ -64,9 +65,17 @@ export default {
       },
     });
 
+    const token = jwt.sign(
+      {
+        userId: user.id,
+      },
+      JWT_KEY,
+      { expiresIn: 3600 }
+    );
+
     return {
       userErrors: [],
-      user: null,
+      token,
     };
   },
 };
