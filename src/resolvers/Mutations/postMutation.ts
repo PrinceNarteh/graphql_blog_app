@@ -32,8 +32,6 @@ export default {
       };
     }
 
-    console.log(userInfo);
-
     const newPost = await prisma.post.create({
       data: {
         title,
@@ -50,7 +48,7 @@ export default {
   postUpdate: async (
     _: any,
     { postId, post }: { postId: string; post: PostCreateArgs["post"] },
-    { prisma }: Context
+    { prisma, userInfo }: Context
   ): Promise<PostPayloadType> => {
     const { title, content } = post;
     if (!title && !content) {
@@ -62,6 +60,15 @@ export default {
     const existingPost = await prisma.post.findUnique({
       where: { id: Number(postId) },
     });
+
+    if (existingPost?.authorId !== userInfo.userId) {
+      return {
+        userErrors: [
+          { message: "You are not authorized to perform this operation." },
+        ],
+        post: null,
+      };
+    }
 
     if (!existingPost) {
       return {
@@ -91,7 +98,7 @@ export default {
   postDelete: async (
     _: any,
     { postId }: { postId: string },
-    { prisma }: Context
+    { prisma, userInfo }: Context
   ): Promise<PostPayloadType> => {
     const post = await prisma.post.findUnique({
       where: { id: parseInt(postId) },
@@ -102,10 +109,60 @@ export default {
         post: null,
       };
     }
+
+    if (post?.authorId !== userInfo.userId) {
+      return {
+        userErrors: [
+          { message: "You are not authorized to perform this operation." },
+        ],
+        post: null,
+      };
+    }
+
     await prisma.post.delete({ where: { id: Number(postId) } });
     return {
       userErrors: [],
       post,
+    };
+  },
+
+  togglePublishPost: async (
+    _: any,
+    { postId }: { postId: string },
+    { prisma, userInfo }: Context
+  ): Promise<PostPayloadType> => {
+    let post = await prisma.post.findUnique({
+      where: { id: parseInt(postId) },
+    });
+
+    if (!post) {
+      return {
+        userErrors: [{ message: "Post does not exist." }],
+        post: null,
+      };
+    }
+
+    if (post?.authorId !== userInfo.userId) {
+      return {
+        userErrors: [
+          { message: "You are not authorized to perform this operation." },
+        ],
+        post: null,
+      };
+    }
+
+    const updatedPost = await prisma.post.update({
+      where: {
+        id: parseInt(postId),
+      },
+      data: {
+        published: !post.published,
+      },
+    });
+
+    return {
+      userErrors: [],
+      post: updatedPost,
     };
   },
 };
