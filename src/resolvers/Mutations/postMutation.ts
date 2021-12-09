@@ -19,26 +19,26 @@ export default {
   postCreate: async (
     _: any,
     { post }: PostCreateArgs,
-    { prisma }: Context
+    { prisma, userInfo }: Context
   ): Promise<PostPayloadType> => {
     const { title, content } = post;
 
     if (!title || !content) {
       return {
         userErrors: [
-          {
-            message: "You must provide a title and content to create a post",
-          },
+          { message: "You must provide a title and content to create a post" },
         ],
         post: null,
       };
     }
 
+    console.log(userInfo);
+
     const newPost = await prisma.post.create({
       data: {
         title,
         content,
-        authorId: 1,
+        authorId: userInfo.userId,
       },
     });
 
@@ -55,11 +55,7 @@ export default {
     const { title, content } = post;
     if (!title && !content) {
       return {
-        userErrors: [
-          {
-            message: "Need to have at least one field to update.",
-          },
-        ],
+        userErrors: [{ message: "Need to have at least one field to update." }],
         post: null,
       };
     }
@@ -69,11 +65,7 @@ export default {
 
     if (!existingPost) {
       return {
-        userErrors: [
-          {
-            message: "Post does not exist.",
-          },
-        ],
+        userErrors: [{ message: "Post does not exist." }],
         post: null,
       };
     }
@@ -106,11 +98,7 @@ export default {
     });
     if (!post) {
       return {
-        userErrors: [
-          {
-            message: "Post does not exist.",
-          },
-        ],
+        userErrors: [{ message: "Post does not exist." }],
         post: null,
       };
     }
