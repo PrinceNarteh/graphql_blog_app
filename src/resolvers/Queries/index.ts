@@ -1,5 +1,4 @@
-import { RootQuery } from "./Query";
+import { Profile } from "./Profile";
+import { Query } from "./Query";
 
-export const Query = {
-  ...RootQuery,
-};
+export { Query, Profile };

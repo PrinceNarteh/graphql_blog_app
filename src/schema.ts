@@ -5,6 +5,7 @@ export const typeDefs = gql`
     me: User
     posts: [Post!]!
     post(id: ID!): PostPayload!
+    profile(userId: ID!): Profile
   }
 
   type Mutation {
@@ -33,7 +34,6 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     email: String!
-    profile: Profile!
     posts: [Post!]!
   }
 

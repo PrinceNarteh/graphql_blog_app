@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
-import * as resolvers from "./resolvers";
+import { resolvers } from "./resolvers";
 import { typeDefs } from "./schema";
 import { getUserFromToken } from "./utils/getUserFromToken";
 
