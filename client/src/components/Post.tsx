@@ -13,12 +13,14 @@ interface PostProps {
 
 const Post = (props: PostProps) => {
   const { title, content, createdAt, user } = props.post;
+  const formattedDate = new Date(Number(createdAt));
   return (
     <StyledPost>
       <div className="head">
         <h3>{title}</h3>
         <small>
-          By {user.name} on {createdAt}
+          By {user.name} on{" "}
+          {`${formattedDate}`.split(" ").splice(0, 4).join(" ")}
         </small>
       </div>
       <div className="body">{content}</div>

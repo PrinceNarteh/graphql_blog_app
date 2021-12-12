@@ -11,6 +11,7 @@ interface ParentPostType {
 
 export const Post = {
   user: (parent: ParentPostType, _: any, context: any) => {
+    console.log(parent);
     return userLoader.load(parent.authorId);
   },
 };
