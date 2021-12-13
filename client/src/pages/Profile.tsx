@@ -7,6 +7,7 @@ const GET_PROFILE = gql`
   query GetProfile($userId: ID!) {
     profile(userId: $userId) {
       bio
+      isMyProfile
       user {
         id
         name
@@ -32,13 +33,14 @@ const Profile = () => {
 
   if (error) return <h1>Error occurred...</h1>;
 
+  const { profile } = data;
   return (
     <StyledProfile>
       <div className="header">
-        <h1>{data.profile.user.name}</h1>
-        <button>Add Post</button>
+        <h1>{profile.user.name}</h1>
+        {profile.isMyProfile ? <button>Add Post</button> : null}
       </div>
-      <div className="body">{data.profile.bio}</div>
+      <div className="body">{profile.bio}</div>
     </StyledProfile>
   );
 };
